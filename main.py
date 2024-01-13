@@ -2,18 +2,26 @@ from express import express
 
 app = express()
 
-def nextHandle(req,res,next):
+myglobaldata = 0
+def nextHandle1(req,res,next):
+    global myglobaldata
+    print(myglobaldata)
+    myglobaldata += 1
+    return next()
+    
+def nextHandle2(req,res,next):
+    res.data = "This is response from \n"
     return next()
 
 def lasthandler(req,res,next):
-    res.setHeader("kdjf","djkf")
-    res.setHeader("kdjf","dfjk")
-    return res.send("oK")
+    return res.send(res.data)
 
-app.get("/",nextHandle)
+app.get("/",nextHandle1)
+app.get("/",nextHandle2)
 app.get("/",lasthandler)
+# app.get("/",nextHandle)
 
-app.get("/a",nextHandle)
+app.get("/a",nextHandle1)
 app.get("/a",lasthandler)
 
 

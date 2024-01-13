@@ -2,7 +2,7 @@ class ResRoute:
     def __init__(self,data):
         self.path = data["path"]
         self.method = data["method"]
-        self.handlers = data["handlers"]
+        self.AllHandlers = [data["handlers"]]
         self.text = ''
         self.headers= []
 
@@ -10,8 +10,11 @@ class ResRoute:
     def setHeader(self,key,value):
         self.headers.append((key,value))
 
-    def send(self,text):
+    def send(self,text = ""):
         self.text = text
-        return "stop"
+        return "end"
     def next(self):
         return "next"
+    
+    def addHandlers(self,newHandler):
+        self.AllHandlers.append(newHandler)

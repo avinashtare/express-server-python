@@ -26,8 +26,8 @@ class Pages:
         attributes.addText(route.text,request)
 
         
-    def default(slef,text,request):
-        request.send_response(200)
+    def default(slef,text,request,port=200):
+        request.send_response(port)
         attributes.setHeader(request)
         attributes.addText(text,request)
 

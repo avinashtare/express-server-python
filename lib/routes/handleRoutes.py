@@ -1,49 +1,37 @@
 from lib.routes.pages import Pages
 
+# add new pages 
 pages = Pages()
 
-def isNextRouteExist(path,method,routes,index):
-    routesList = []
-    index = index+1
-    while(index<len(routes.routes[method])):
-        if routes.routes[method][index].path == path:
-            routesList.append(routes)
-            break
-        index +=1
-        
-    if (len(routesList) == 0):
-        return False
-    else:
-        return True
-
-
 class HandleRoutes:
-    def HandleGETRequest(self,request,routes):
-        for index,route in enumerate(routes.routes["GET"]):
-            if request.path == route.path:
-                # call to response handler 
-                handlerReturn = route.handlers(index,route,route.next)
+    def handle_next_handler(self,index,request,routes,method):
+        for routeIndex in range(0,len(routes.all_routes[method])):
+                currentRoute = routes.all_routes[method][routeIndex]
+                route = currentRoute[0]
 
-                # if user send response
-                if(handlerReturn == 'stop'):
-                    # send a default text page 
-                    pages.Send(request,route)
-                    return None
-
-                # if user call next response 
-                elif(handlerReturn == 'next'):
-                    # check next request exist or not 
-                    if (not isNextRouteExist(request.path,route.method,routes,index)):
-                        pages.default("Next Request Not Exist",request)
-                        return None
-                # if user forgot to call next response or last respone  
-                else:
-                    # check next request exist or not 
-                    if (not isNextRouteExist(request.path,route.method,routes,index)):
-                        pages.default("Add A Response this is last route",request)
+                if (request.path != route.path):continue
+                try:
+                    ResponseState = route.AllHandlers[index]("kdjf",route,route.next)
+                    if(ResponseState == "end"):
+                        pages.Send(request,route)
+                        return True
+                    elif(ResponseState == "next"):
+                        if(index<=currentRoute[1]):
+                            self.handle_next_handler(index+1,request,routes,method)
+                            return True
                     else:
-                        pages.default("Add a respone route",request)
-                    return None
-        
-        # if route not available send 404 
-        pages.show404(request)
+                        pages.default("Please add next request",request)
+                        return True
+                except:
+                    pages.default("Please add response",request)
+                    return True
+        return False
+    
+    def handle_get_request(self,request,routes):
+        try:
+            if not self.handle_next_handler(0,request,routes,"GET"):
+                # if route not available send 404 page
+                pages.show404(request)
+        except:
+            pages.default("Internal Server Error",request,500)
+            return None 

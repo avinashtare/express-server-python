@@ -7,10 +7,14 @@ routes = Routes()
 routesHandler = HandleRoutes()
 
 class MyRequestHandler(BaseHTTPRequestHandler):
+
     # get request 
     def do_GET(self):
-        routesHandler.HandleGETRequest(self,routes)
-
+        try:
+            routesHandler.handle_get_request(self,routes)
+        except:
+            pass
+       
     def do_POST(self):
         length = int(self.headers['Content-Length'])
         print(self.rfile.read(length).decode("utf-8"))
@@ -18,6 +22,8 @@ class MyRequestHandler(BaseHTTPRequestHandler):
     # default server log
     def log_message(self, format, *args):
         # Suppress log messages
+        pass
+    def handle_error(self, request, client_address):
         pass
 
 
