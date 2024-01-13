@@ -1,20 +1,27 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
+from lib.routes.main import Routes
+from lib.routes.handleRoutes import HandleRoutes
+
+# all routes 
+routes = Routes()
+routesHandler = HandleRoutes()
 
 class MyRequestHandler(BaseHTTPRequestHandler):
     # get request 
     def do_GET(self):
-        # Define routes based on the requested path
-        self.send_response(200)
-        self.send_header('Content-Type', 'text/html')
-        self.end_headers()
-        self.wfile.write(b'Hello, this is the home page!')
+        routesHandler.HandleGETRequest(self,routes)
+
+    def do_POST(self):
+        length = int(self.headers['Content-Length'])
+        print(self.rfile.read(length).decode("utf-8"))
 
     # default server log
     def log_message(self, format, *args):
         # Suppress log messages
         pass
 
-class Server:
+
+class Server(MyRequestHandler):
     def __init__(self, port=3000, host="localhost",listenerHandler=None):
         self.port = port
         self.host = host

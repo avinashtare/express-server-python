@@ -2,9 +2,19 @@ from express import express
 
 app = express()
 
-def handleHome(req,res,next):
-    print(req,res,next)
+def nextHandle(req,res,next):
+    return next()
 
-app.get("/",handleHome)
+def lasthandler(req,res,next):
+    res.setHeader("kdjf","djkf")
+    res.setHeader("kdjf","dfjk")
+    return res.send("oK")
 
-app.listen(3000)
+app.get("/",nextHandle)
+app.get("/",lasthandler)
+
+app.get("/a",nextHandle)
+app.get("/a",lasthandler)
+
+
+app.listen(3000,"localhost")

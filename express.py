@@ -1,25 +1,26 @@
-from lib.http_server import Server
+from lib.http_server import Server,routes
 
 class express:
+    # get request 
     def get(self,path,handlers):
-          handlers("req","res","next")
-          
-    def listen(self,port,*args):
-        argsLen = len(args)
-        server = None
-        if(argsLen == 0):
-            server =  Server(port)
-        elif(argsLen == 1):
-                arg_1 = type(args[0]).__name__
-                if(arg_1== 'str'):
-                      server =  Server(port,host=args[0])
-                elif(arg_1 == "function"):
-                          server =  Server(port,listenerHandler=args[0])
-        elif(argsLen==2):
-                arg_1 = type(args[0]).__name__
-                arg_2 = type(args[1]).__name__
-
-                if(arg_1 == "str" and arg_2 == "function"):
-                    server =  Server(port,host=args[0],listenerHandler=args[1])
+        resData = {"path": path,"method": "GET","handlers": handlers}
+        routes.AddNewRoute(resData)
+    def post(self,path,handlers):
+        resData = {"path": path,"method": "POST","handlers": handlers}
+        routes.AddNewRoute(resData)
         
+    # express.listen()
+    def listen(self, port, *args):
+        args_len = len(args)
+
+        if args_len == 0:
+            server = Server(port)
+        elif args_len == 1 and isinstance(args[0], str):
+            server = Server(port, host=args[0])
+        elif args_len == 1 and callable(args[0]):
+            server = Server(port, listenerHandler=args[0])
+        elif args_len == 2 and isinstance(args[0], str) and callable(args[1]):
+            server = Server(port, host=args[0], listenerHandler=args[1])
+        
+        # run server 
         server.start()
