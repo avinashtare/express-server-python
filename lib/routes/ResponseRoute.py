@@ -4,8 +4,7 @@ class ResRoute:
         self.method = data["method"]
         self.AllHandlers = [data["handlers"]]
         self.text = ''
-        self.headers= []
-
+        self.headers = []
 
     def setHeader(self,key,value):
         self.headers.append((key,value))

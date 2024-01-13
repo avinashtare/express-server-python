@@ -1,13 +1,13 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from lib.routes.main import Routes
 from lib.routes.handleRoutes import HandleRoutes
+from lib.utils.express import set_host__name
 
 # all routes 
 routes = Routes()
 routesHandler = HandleRoutes()
 
 class MyRequestHandler(BaseHTTPRequestHandler):
-
     # get request 
     def do_GET(self):
         try:
@@ -31,12 +31,15 @@ class Server(MyRequestHandler):
     def __init__(self, port=3000, host="localhost",listenerHandler=None):
         self.port = port
         self.host = host
+        self.running_host = set_host__name(host)
+        
+        # if user not added any callback for server 
         self.listenerHandler = self.DefaultListenerHandler if listenerHandler is None else listenerHandler
         
     # default listener
     def DefaultListenerHandler(self,error):
         if(not error):
-            print(f"Server Running At http://{self.host}:{self.port}")
+            print(f"Server Running At http://{self.running_host}:{self.port}")
 
     def start(self):
         server_address = (self.host, self.port)

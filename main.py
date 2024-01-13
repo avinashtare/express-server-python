@@ -2,27 +2,22 @@ from express import express
 
 app = express()
 
-myglobaldata = 0
-def nextHandle1(req,res,next):
-    global myglobaldata
-    print(myglobaldata)
-    myglobaldata += 1
-    return next()
-    
-def nextHandle2(req,res,next):
-    res.data = "This is response from \n"
-    return next()
+def home(req,res,next):
+    password = (req.find_qeury("pass"))
+    username = (req.find_qeury("username"))
 
-def lasthandler(req,res,next):
-    return res.send(res.data)
+    return res.send(f"""
+                    <h1>Home</h1><a href='/about'>About</a>
+                    <h2>UserName: {username}</h2>
+                    <h2>Password: {password}</h2>
+                    """)
 
-app.get("/",nextHandle1)
-app.get("/",nextHandle2)
-app.get("/",lasthandler)
-# app.get("/",nextHandle)
+def about(req,res,next):
+    path = req.ip
+    return res.send(f"{path}<h1>About</h1><a href='/'>Home</a>")
 
-app.get("/a",nextHandle1)
-app.get("/a",lasthandler)
+app.get("/",home)
+app.get("/about",about)
+app.get("/about 2 2 2",about)
 
-
-app.listen(3000,"localhost")
+app.listen(3000,"0.0.0.0")

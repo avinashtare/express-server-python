@@ -34,4 +34,9 @@ class Pages:
     def show404(slef,request):
         request.send_response(400)
         attributes.setHeader(request)
-        attributes.addText('<h1>Page Not Found!</h1>',request)
+        attributes.addText('<h2 align="center">404 Not Found !</h2>',request)
+
+    def error(slef,request,error):
+        request.send_response(5000)
+        attributes.setHeader(request)
+        attributes.addText(f"""<h2 style="color: red;text-align: center;">{error}</h2""",request)
