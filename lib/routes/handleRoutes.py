@@ -16,8 +16,13 @@ class HandleRoutes:
                 if (requestPath != (route.path).replace("%20"," ")):continue
                 try:
                     ResponseState = route.AllHandlers[index](RequestData,route,route.next)
+                    # finnaly send response 
                     if(ResponseState == "end"):
-                        pages.Send(request,route)
+                        try:
+                            pages.Send(request,route)
+                        except:
+                            pages.show404(request)
+                            pass
                         return True
                     elif(ResponseState == "next"):
                         if(index<currentRoute[1]):

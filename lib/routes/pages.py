@@ -1,4 +1,4 @@
-import datetime
+import time
 class Attributes:
     def setHeader(self,request,headers=[]):
         isContentTypeAvailable = False
@@ -13,7 +13,6 @@ class Attributes:
 
     # add text response to user 
     def addText(self,text,request):
-            
             request.wfile.write(text.encode("utf-8"))
 
 
@@ -23,6 +22,7 @@ class Pages:
     def Send(self,request,route):
         request.send_response(200)
         attributes.setHeader(request,route.headers)
+        time.sleep(1)
         attributes.addText(route.text,request)
 
         

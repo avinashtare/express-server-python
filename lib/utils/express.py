@@ -20,3 +20,15 @@ def set_host__name(host):
     if host == "0.0.0.0" and host != "localhost" and host != "127.0.0.1":
         return socket.gethostbyname(socket.gethostname())
     return host
+
+def check_port_open(host, port):
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.settimeout(1)
+
+    try:
+        sock.connect((host, port))
+        return True
+    except (socket.timeout, ConnectionRefusedError):
+        return False
+    finally:
+        sock.close()

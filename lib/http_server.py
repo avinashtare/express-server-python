@@ -1,7 +1,8 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from lib.routes.main import Routes
 from lib.routes.handleRoutes import HandleRoutes
-from lib.utils.express import set_host__name
+from lib.utils.express import set_host__name,check_port_open
+from socketserver import ThreadingMixIn
 
 # all routes 
 routes = Routes()
@@ -27,24 +28,31 @@ class MyRequestHandler(BaseHTTPRequestHandler):
         pass
 
 
-class Server(MyRequestHandler):
+class ThreadedHTTPServer(ThreadingMixIn, HTTPServer):
+    pass
+
+class Server():
     def __init__(self, port=3000, host="localhost",listenerHandler=None):
         self.port = port
         self.host = host
         self.running_host = set_host__name(host)
+        self._handle_port_open()
         
         # if user not added any callback for server 
         self.listenerHandler = self.DefaultListenerHandler if listenerHandler is None else listenerHandler
         
     # default listener
     def DefaultListenerHandler(self,error):
+        # if not error server is running 
         if(not error):
-            print(f"Server Running At http://{self.running_host}:{self.port}")
+            # server running sucess green msg 
+            server_running_success = (f"Server Running At http://{self.running_host}:{self.port}")
+            print(f"\033[92m{server_running_success}\033[0m")
 
     def start(self):
         server_address = (self.host, self.port)
         try:
-            httpd = HTTPServer(server_address, MyRequestHandler)
+            httpd = ThreadedHTTPServer(server_address, MyRequestHandler)
             
             # handle server listen 
             self.listenerHandler(None)
@@ -55,3 +63,10 @@ class Server(MyRequestHandler):
         except KeyboardInterrupt:
                 print('\nServer is shutting down...')
                 httpd.server_close()
+    
+    def _handle_port_open(self):
+        if (check_port_open(self.running_host,self.port)):
+            error_message = f"Error:Address Already In use http://{self.running_host}:{self.port}"
+            # red text error 
+            print(f"\033[91m{error_message}\033[0m")
+            exit(0)

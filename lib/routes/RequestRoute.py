@@ -1,5 +1,4 @@
 from urllib.parse import urlparse,parse_qs
-import copy
 
 class ReqRoute:
     def __init__(self,method,request):
