@@ -1,30 +1,20 @@
-import time
-class Attributes:
-    def setHeader(self,request,headers=[]):
-        isContentTypeAvailable = False
-        for (key,value) in headers:
-            request.send_header(key, value)
-            if(key.lower() == "content-type"): isContentTypeAvailable = True
-        
-        if(not isContentTypeAvailable): request.send_header('Content-Type', 'text/html')
+from lib.utils.attributes import Attributes
 
-        # end headers 
-        request.end_headers()
-
-    # add text response to user 
-    def addText(self,text,request):
-            request.wfile.write(text.encode("utf-8"))
-
-
+# all atributes actions
 attributes = Attributes()
 
 class Pages:
-    def Send(self,request,route):
+    def Send(self,request,route,method):
         request.send_response(200)
         attributes.setHeader(request,route.headers)
-        time.sleep(1)
-        attributes.addText(route.text,request)
+        # time.sleep(1)
 
+        # send a file 
+        if(route.sendfilepath):
+             attributes.sendfile(route.sendfilepath,request,method)
+        else:
+            attributes.addText(route.text,request)
+        
         
     def default(slef,text,request,port=200):
         request.send_response(port)

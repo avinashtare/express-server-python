@@ -1,6 +1,6 @@
-from lib.routes.ResponseRoute import ResRoute
+from lib.control_routes.route_cluster import RouteCluster
 
-class Routes:
+class ControlRoutes:
     def __init__(self):
         self.all_routes = {}
         
@@ -13,7 +13,7 @@ class Routes:
 
         # Append a new ResRoute instance to the method
         if(len(self.all_routes[resData["method"]]) == 0):
-                newResponse = [ResRoute(resData),0]
+                newResponse = [RouteCluster(resData),0]
                 self.all_routes[resData["method"]].append(newResponse)
         else:
              for route in self.all_routes[resData["method"]]:
@@ -22,5 +22,5 @@ class Routes:
                        route[1] = route[1]+1
                        break
              else:
-                newResponse = [ResRoute(resData),0]
+                newResponse = [RouteCluster(resData),0]
                 self.all_routes[resData["method"]].append(newResponse)

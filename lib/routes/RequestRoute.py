@@ -1,6 +1,6 @@
 from urllib.parse import urlparse,parse_qs
 
-class ReqRoute:
+class RequestRoute:
     def __init__(self,method,request):
         self.request = request
         self.path = request.path.replace("%20"," ")

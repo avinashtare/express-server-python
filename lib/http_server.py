@@ -1,20 +1,18 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
-from lib.routes.main import Routes
-from lib.routes.handleRoutes import HandleRoutes
+from lib.control_routes.control_routes import ControlRoutes
+from lib.route_handler.handle_routes import HandleRoutes
 from lib.utils.express import set_host__name,check_port_open
 from socketserver import ThreadingMixIn
 
 # all routes 
-routes = Routes()
+UserRoutes = ControlRoutes()
 routesHandler = HandleRoutes()
 
 class MyRequestHandler(BaseHTTPRequestHandler):
     # get request 
     def do_GET(self):
-        try:
-            routesHandler.handle_get_request(self,routes)
-        except:
-            pass
+        routesHandler.handle_get_request(self,UserRoutes)
+      
        
     def do_POST(self):
         length = int(self.headers['Content-Length'])
@@ -26,6 +24,7 @@ class MyRequestHandler(BaseHTTPRequestHandler):
         pass
     def handle_error(self, request, client_address):
         pass
+    def version_string(self): return 'Express/Python'
 
 
 class ThreadedHTTPServer(ThreadingMixIn, HTTPServer):
