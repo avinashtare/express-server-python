@@ -1,4 +1,4 @@
-from lib.control_routes.route_cluster import RouteCluster
+from .route_cluster import RouteCluster
 
 class ControlRoutes:
     def __init__(self):

@@ -1,7 +1,7 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
-from lib.control_routes.control_routes import ControlRoutes
-from lib.route_handler.handle_routes import HandleRoutes
-from lib.utils.express import set_host__name,check_port_open
+from .control_routes.control_routes import ControlRoutes
+from .route_handler.handle_routes import HandleRoutes
+from .utils.express import set_host__name,check_port_open
 from socketserver import ThreadingMixIn
 
 # all routes 

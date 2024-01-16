@@ -1,4 +1,4 @@
-from lib.utils.attributes import Attributes
+from ..utils.attributes import Attributes
 
 # all atributes actions
 attributes = Attributes()

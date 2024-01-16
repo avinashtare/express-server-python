@@ -1,6 +1,6 @@
 import os
-from lib.utils.paths import path_normalizer
-from lib.utils.files_helper import write_file
+from ..utils.paths import path_normalizer
+from ..utils.files_helper import write_file
 
 class Attributes:
     def setHeader(self,request,headers=[]):

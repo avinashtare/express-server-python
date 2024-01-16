@@ -1,4 +1,8 @@
 __pycache__
 .env
 .vscode
-00testing
+configs
+build
+dist
+express_server.egg-info
+work

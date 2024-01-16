@@ -1,6 +1,6 @@
-from lib.utils.pages import Pages
-from lib.routes.RequestRoute import RequestRoute
-from lib.routes.ResponseRoute import ResponseRoute
+from ..utils.pages import Pages
+from ..routes.RequestRoute import RequestRoute
+from ..routes.ResponseRoute import ResponseRoute
 import traceback 
 
 # add new pages 
