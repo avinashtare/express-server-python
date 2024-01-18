@@ -1,7 +1,7 @@
 from setuptools import setup
 import pathlib
 
-# Read the contents of your README.md file
+# Read the contents of your README.md file and license file 
 readme_path = pathlib.Path(__file__).parent / 'README.md'
 license_path = pathlib.Path(__file__).parent / 'LICENSE'
 long_description = readme_path.read_text(encoding='utf-8')
@@ -10,7 +10,7 @@ license_data = license_path.read_text(encoding='utf-8')
 
 setup(
     name='express_server',
-    version="0.0.2",
+    version="0.0.3",
     install_requires=[],
     python_requires='>=3.1',
     packages= ["express_server"],

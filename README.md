@@ -39,5 +39,5 @@ We are actively working on improving and expanding this project. While many feat
 As a work in progress, security considerations have not been fully addressed. Avoid using this project in a production environment or with sensitive data.
 
 #### Links
-PyPI Releases: https://pypi.org/project/express-server/
-Github Code: https://github.com/avinashtare/express-server-python
+* PyPI Releases: https://pypi.org/project/express-server/
+* Github Code: https://github.com/avinashtare/express-server-python

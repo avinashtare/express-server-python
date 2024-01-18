@@ -1,4 +1,8 @@
-class RouteCluster:
+"""
+this is a single route object contain path,method,and callbacks of route
+"""
+
+class NewRoute:
     def __init__(self,data):
         self.path = data["path"]
         self.method = data["method"]

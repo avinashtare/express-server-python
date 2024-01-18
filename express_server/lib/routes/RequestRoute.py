@@ -1,33 +1,43 @@
 from urllib.parse import urlparse,parse_qs
 
+# < -- user query like js object -- >
+class linked_obj():
+    def __init__(self, arr) -> None:
+        for key in arr:
+            # < -- set as self -- >
+            setattr(self, key, arr[key])
+
+
 class RequestRoute:
     def __init__(self,method,request):
         self.request = request
-        self.path = request.path.replace("%20"," ")
+        self.path = (request.path.replace("%20"," ")).lower()
+        self.protocol = request.protocol_version.split("/")[0]
         self.url = self.originalUrl = self.pathname = self.href = self._raw  = urlparse(self.path).path
+        # < -- find host and port of server -- >
         (host, port) = self.request.server.server_address
-        self.server_url = f"http://{host}:{port}"
+        # < -- set example.com -- >
+        self.hostname = host
+        # < -- set example.com:port -- >
+        self.host = f"http://{host}:{port}"
         self.server_full_url = f"http://{host}:{port}"+self.path
         self.method = method
         self._write_row_header(request)
+        # < -- query like ?query=value -- >
+        self.query = None
         self._find_query_fragment(self.server_full_url)
+        # < -- set client ip and port -- >
         self.ip = request.client_address[0]
-        self.user_port = request.client_address[1]
+        self.client_port = request.client_address[1]
         
         self.headers = []
         self.rawHeaders = []
-        self.query: {}
         # this is for /:kjsd like this url 
-        self.params: {}
+        self.params = {}
         # post body
         self.body = {}
-        # cookie
-        self.cookies = []
-        cookies = request.headers.get("Cookie")
-
-        # set cookies
-        if cookies: self.cookies = [cookie.split("=") for cookie in cookies.split('; ')]
-
+        # < -- set cookies -- >
+        self._set_init_cookie()
     def get(self,key):
         try:
             for headerKey, value in self.request.headers.items():
@@ -59,10 +69,22 @@ class RequestRoute:
             if(sotredQuery == query):
                 return self.query[sotredQuery]
         return None
-    
-    def _find_query_fragment(self,url):
-        parsed_url = urlparse(url)
-        self.query = {key: value[0] for key, value in parse_qs(parsed_url.query).items()}
+    def _set_init_cookie(self):
+        row_cookies = self.request.headers.get("Cookie")
+        cookies = {}
+        # set cookies
+        if row_cookies:
+            cookies = {cookie.split("=")[0]: cookie.split("=")[1] for cookie in row_cookies.split('; ')}
+        self.cookies = linked_obj(cookies)
 
-        # set fragment like :- #home
+
+    def _find_query_fragment(self,url):
+        # < -- splice url -- >
+        parsed_url = urlparse(url)
+
+        # < -- find all query from request -- >
+        query = {key: value[0] for key, value in parse_qs(parsed_url.query).items()}
+        self.query = linked_obj(query)
+
+        # < -- set fragment like :- /blog#home -- >
         self.fragment = parsed_url.fragment
