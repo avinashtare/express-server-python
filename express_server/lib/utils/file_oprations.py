@@ -1,4 +1,3 @@
-import time
 # < -- send file in chunks -- > 
 def write_file_chunks(path,request,chunk_size=1024):
     with open(path,"rb") as file:
@@ -54,12 +53,16 @@ def write_video_stream(VIDEO_PATH,video_type,CHUNK_IN_MB,file_size, request):
             return
         except Exception as  error:
             pass
-
+        
         # < -- if user try to downlaod or request direct file without any broswer an he don't have any range -- >
-        # < -- set response and content header -- >
-        request.send_response(200)
-        request.send_header("Content-Type", video_type)
-        request.send_header("Content-Length", file_size)
-        request.end_headers()
-        # < -- write full file chunks by chunks -- >
-        write_file_chunks(VIDEO_PATH,request)
+        try:
+            # < -- set response and content header -- >
+            request.send_response(200)
+            request.send_header("Content-Type", video_type)
+            request.send_header("Content-Length", file_size)
+            request.end_headers()
+            # < -- write full file chunks by chunks -- >
+            write_file_chunks(VIDEO_PATH,request)
+        except:
+            pass
+    

@@ -20,17 +20,17 @@ class Pages:
             attributes.addText(route.text,request)
         
         
-    def default(slef,text,request,response_code=200):
+    def default(self,text,request,response_code=200):
         request.send_response(response_code)
         attributes.setHeader(request)
         attributes.addText(text,request)
 
-    def show404(slef,request):
+    def show404(self,request):
         request.send_response(400)
         attributes.setHeader(request,[],True)
         attributes.addText('<h2 align="center">404 Not Found !</h2>',request)
 
-    def error(slef,request,error):
+    def error(self,request,error):
         request.send_response(500)
         attributes.setHeader(request,[],True)
         attributes.addText(f"""<h2 style="color: red;text-align: center;">{error}</h2""",request)

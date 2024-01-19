@@ -43,7 +43,7 @@ class Server():
         self._handle_port_open()
         
         # < -- if user not added any callback for server listener then added custom listener  -- >
-        self.listenerHandler = self.DefaultListenerHandler if listenerHandler is None else listenerHandler
+        self.listenerHandler = self.DefaultListenerHandler if listenerHandler == None else listenerHandler
         
     # < -- default listener -- >
     def DefaultListenerHandler(self,error):

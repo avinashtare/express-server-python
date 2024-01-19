@@ -1,5 +1,5 @@
 import json
-from ..utils.paths import find_content_type
+from ..utils.paths import find_content_type,GetCookieOptions
 
 class DownloadFile:
     def __init__(self,path,filename,error_handler) -> None:
@@ -31,9 +31,19 @@ class ResponseRoute:
     def setHeader(self,key,value):
         self.headers.append((key,value))
     
-    def setCookie(self,key,value):
-        pass
+    def setCookie(self,key,value,options={"expires":False,"path": False,"secure": False,"httpOnly": False,"sameSite": False,"domain": False}):
+        
+        # getting options 
+        optionsStr = GetCookieOptions(options)
+        cookie_value = f"{key}={value};{optionsStr}"
+        # set cookies in header
+        self.setHeader("Set-Cookie",cookie_value)
 
+    def clearCookie(self,key,options={"path":"/"}):
+        path = options["path"]
+        cookie_value = f"{key}=None;Path={path};Expires=Sun, 05 Feb 2006 02:15:00 GMT"
+        self.setHeader("Set-Cookie",cookie_value)
+        
     def send(self,text = ""):
         self.text = str(text)
         return "end"
@@ -67,7 +77,12 @@ class ResponseRoute:
         self.download_obj = DownloadFile(path,filename,error_handler)
         return "end"
     
+    # send content type like res.type("json")
     def type(self,ContentType):
         ContentType = find_content_type(ContentType,"extention")[0]
         if(ContentType):
             self.setHeader("Content-Type",ContentType)
+    
+    # if attribute not exist
+    def __getattr__(self, attr):
+        return None

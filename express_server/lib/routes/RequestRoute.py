@@ -3,10 +3,14 @@ from urllib.parse import urlparse,parse_qs
 # < -- user query like js object -- >
 class linked_obj():
     def __init__(self, arr) -> None:
+        self.__list__ = arr
         for key in arr:
             # < -- set as self -- >
             setattr(self, key, arr[key])
-
+        
+    # if key not not find 
+    def __getattr__(self, attr):
+        return None
 
 class RequestRoute:
     def __init__(self,method,request):
@@ -22,31 +26,23 @@ class RequestRoute:
         self.host = f"http://{host}:{port}"
         self.server_full_url = f"http://{host}:{port}"+self.path
         self.method = method
-        self._write_row_header(request)
         # < -- query like ?query=value -- >
         self.query = None
-        self._find_query_fragment(self.server_full_url)
+        self._find_query(self.server_full_url)
         # < -- set client ip and port -- >
         self.ip = request.client_address[0]
         self.client_port = request.client_address[1]
         
-        self.headers = []
+        self.headers = None
         self.rawHeaders = []
+        self._write_row_header(request)
+
         # this is for /:kjsd like this url 
         self.params = {}
         # post body
         self.body = {}
         # < -- set cookies -- >
         self._set_init_cookie()
-    def get(self,key):
-        try:
-            for headerKey, value in self.request.headers.items():
-                if(headerKey == key):
-                    return value
-        except:
-            pass
-        return None
-    
     def getCookie(self,key):
         try:
             for cookieKey, value in self.cookies:
@@ -58,7 +54,9 @@ class RequestRoute:
     
     def _write_row_header(self,request):
         try:
-           self.headers = [{key, value} for key, value in request.headers.items()]
+           headers = {key: value for (key,value) in request.headers.items()}
+           self.headers = linked_obj(headers)
+          
            for key, value in request.headers.items():
                self.rawHeaders.extend([key,value])
         except:
@@ -69,22 +67,34 @@ class RequestRoute:
             if(sotredQuery == query):
                 return self.query[sotredQuery]
         return None
+    
     def _set_init_cookie(self):
         row_cookies = self.request.headers.get("Cookie")
-        cookies = {}
+        
         # set cookies
-        if row_cookies:
-            cookies = {cookie.split("=")[0]: cookie.split("=")[1] for cookie in row_cookies.split('; ')}
-        self.cookies = linked_obj(cookies)
+        cookies_dist = {}
+        try:
+            if row_cookies:
+                for cookie in  row_cookies.split('; '):
+                    cookieArr = cookie.split("=")
+                    if(len(cookieArr) == 2):
+                        cookies_dist[cookieArr[0]] = cookieArr[1]
+                    elif(len(cookieArr) == 1):
+                        cookies_dist[""] = cookieArr[0]
+        except:
+            pass 
+        # add a cookies object in cookies
+        self.cookies = linked_obj(cookies_dist)
+        
+    # if attribute not exist
+    def __getattr__(self, attr):
+        return None
 
 
-    def _find_query_fragment(self,url):
+    def _find_query(self,url):
         # < -- splice url -- >
         parsed_url = urlparse(url)
 
-        # < -- find all query from request -- >
+        # < -- find all query from request and add key value in dictionary ex:- {key,value} -- >
         query = {key: value[0] for key, value in parse_qs(parsed_url.query).items()}
         self.query = linked_obj(query)
-
-        # < -- set fragment like :- /blog#home -- >
-        self.fragment = parsed_url.fragment

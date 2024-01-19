@@ -71,10 +71,12 @@ class HandleRoutes:
             
             # < -- handle get request -- >
             elif not self.handle_next_handler(0,request,routes,"GET"):
+                
                 # < --  if handle_next_handler return false then show 404 error  -- >
                 pages.show404(request)
                 
         except Exception as error:
+            # traceback.print_exc()  
             # < -- if any error occurred show 505 server error -- >
             styles.redText(error)
             pages.default("Internal Server Error",request,500)

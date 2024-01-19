@@ -1,3 +1,4 @@
+from datetime import datetime, timezone
 import os
 from ..constants import file_types
 
@@ -28,3 +29,59 @@ def find_content_type(path,path_info):
         return get_content_info_by_extension(extension)
     except:
         return (None,None)
+
+# handle cookie options
+def keyExist(list,key):
+    try:
+        return list[key]
+    except:
+        return False
+
+
+
+def CalcuateGMT(sec):
+    # Get the current time in GMT
+    current_time_gmt = datetime.utcfromtimestamp(sec).replace(tzinfo=timezone.utc)
+
+    # Format the datetime object as a string
+    formatted_time = current_time_gmt.strftime("%a, %d %b %Y %H:%M:%S GMT")
+    return formatted_time
+
+def GetCookieOptions(options):
+    optionsStr = ""
+    preOptions={
+        "path": keyExist(options,"path"),
+        "domain": keyExist(options,"domain"),
+        "expires": keyExist(options,"expires"),
+        "secure": keyExist(options,"secure"),
+        "httpOnly": keyExist(options,"httpOnly"),
+        "sameSite": keyExist(options,"sameSite")
+    }    
+    
+    # calcuate expires
+    if type(preOptions["expires"]) == int or type(preOptions["expires"]) == float:
+        gmt_time = CalcuateGMT(preOptions["expires"])
+        optionsStr += f'Expires={gmt_time};'
+        
+    # check domain
+    if preOptions["domain"]:
+        optionsStr += f'Domain={preOptions["domain"]};'
+    
+    # check path
+    if preOptions["path"]:
+        optionsStr += f'Path={preOptions["path"]};'
+    
+    #check same site
+    sameSite = preOptions["sameSite"]
+    if type(sameSite) == str and (sameSite in  "Lax" or sameSite in "Strict" or sameSite in "None"):
+        optionsStr += f"SameSite={sameSite};"
+        
+    # check secure bool value
+    if preOptions["secure"]:
+        optionsStr += f"Secure;"
+        
+    # check httpOnly bool value
+    if preOptions["httpOnly"]:
+        optionsStr += f"HttpOnly;"
+ 
+    return optionsStr
