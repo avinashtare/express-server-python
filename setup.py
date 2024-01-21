@@ -10,7 +10,7 @@ license_data = license_path.read_text(encoding='utf-8')
 
 setup(
     name='express_server',
-    version="0.0.3",
+    version="0.0.4",
     install_requires=[],
     python_requires='>=3.1',
     packages= ["express_server"],
