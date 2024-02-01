@@ -1,3 +1,5 @@
+import tempfile
+
 file_types = {
     "application": {
         ".js": "application/javascript",
@@ -161,3 +163,7 @@ file_types = {
         ".movie": "video/x-sgi-movie",
     },
 }
+
+temp_file_path = f"{tempfile.gettempdir()}\\py_express_temp"
+# < -- it's delete if file excelity not delted form temp folder it's delete after 24 hours -- >
+temp_file_remove_sec = 86400

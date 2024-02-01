@@ -1,3 +1,4 @@
+from typing import Any
 from .user_defind_route import NewRoute
 
 """
@@ -21,7 +22,6 @@ class MangaeRoutes:
     
     # < -- add new route in all_routes dictionary -- >
     def AddNewRoute(self, resData):
-        
         # < -- Defice route by methods -- >
         try:
             # Check if the method key exists, and create an empty list if not

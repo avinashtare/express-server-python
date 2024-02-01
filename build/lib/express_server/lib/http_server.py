@@ -11,15 +11,42 @@ UserRoutes = MangaeRoutes()
 routesHandler = HandleRoutes()
 
 class MyRequestHandler(BaseHTTPRequestHandler):
-    # < -- client get request recived  -- >
     def do_GET(self):
         # < -- handle get request by routesHandler Object -- >
-        routesHandler.handle_get_request(self,UserRoutes)
-      
-    # < -- client post request recived  -- >
+        routesHandler.handle_user_request(self,UserRoutes,"GET")
+    
     def do_POST(self):
-        length = int(self.headers['Content-Length'])
-        print(self.rfile.read(length).decode("utf-8"))
+         # < -- handle post request by routesHandler Object -- >
+        routesHandler.handle_user_request(self,UserRoutes,"POST")
+
+    def do_PUT(self):
+         # < -- handle PUT request by routesHandler Object -- >
+        routesHandler.handle_user_request(self,UserRoutes,"PUT")
+
+
+    def do_DELETE(self):
+         # < -- handle DELETE request by routesHandler Object -- >
+        routesHandler.handle_user_request(self,UserRoutes,"DELETE")
+
+
+    def do_PATCH(self):
+         # < -- handle PATCH request by routesHandler Object -- >
+        routesHandler.handle_user_request(self,UserRoutes,"PATCH")
+
+
+    def do_HEAD(self):
+         # < -- handle HEAD request by routesHandler Object -- >
+        routesHandler.handle_user_request(self,UserRoutes,"HEAD")
+
+
+    def do_OPTIONS(self):
+         # < -- handle OPTIONS request by routesHandler Object -- >
+        routesHandler.handle_user_request(self,UserRoutes,"OPTIONS")
+  
+    # < -- when send custom error handle this like unknown method  -- >        
+    def send_error(self, code, message=None,*args):
+        # print(code,message)
+        pass
 
     # < -- default server log -- >
     def log_message(self, format, *args):

@@ -1,16 +1,5 @@
 from urllib.parse import urlparse,parse_qs
-
-# < -- user query like js object -- >
-class linked_obj():
-    def __init__(self, arr) -> None:
-        self.__list__ = arr
-        for key in arr:
-            # < -- set as self -- >
-            setattr(self, key, arr[key])
-        
-    # if key not not find 
-    def __getattr__(self, attr):
-        return None
+from ..utils.paths import set_body,LinkedObj
 
 class RequestRoute:
     def __init__(self,method,request):
@@ -38,11 +27,16 @@ class RequestRoute:
         self._write_row_header(request)
 
         # this is for /:kjsd like this url 
-        self.params = linked_obj({})
-        # post body
+        self.params = LinkedObj({})
+        
+        # body
         self.body = {}
+        # files
+        self.files = {}
         # < -- set cookies -- >
         self._set_init_cookie()
+        # < -- set body -- >
+        self._set_init_body()
     def getCookie(self,key):
         try:
             for cookieKey, value in self.cookies:
@@ -55,7 +49,15 @@ class RequestRoute:
     def _write_row_header(self,request):
         try:
            headers = {key: value for (key,value) in request.headers.items()}
-           self.headers = linked_obj(headers)
+           # < -- making capitalize word like avi-ok --> AviOk -- >
+           headers_modify = {}
+           for header in headers:
+                # Capitalize the first letter of each part (except the first part)
+                modified_header = ''.join(word.capitalize() for word in header.split('-'))
+                
+                headers_modify[modified_header] = headers[header]
+            
+           self.headers = LinkedObj(headers_modify)
           
            for key, value in request.headers.items():
                self.rawHeaders.extend([key,value])
@@ -84,7 +86,7 @@ class RequestRoute:
         except:
             pass 
         # add a cookies object in cookies
-        self.cookies = linked_obj(cookies_dist)
+        self.cookies = LinkedObj(cookies_dist)
 
     def _find_query(self,url):
         # < -- splice url -- >
@@ -92,11 +94,14 @@ class RequestRoute:
 
         # < -- find all query from request and add key value in dictionary ex:- {key,value} -- >
         query = {key: value[0] for key, value in parse_qs(parsed_url.query).items()}
-        self.query = linked_obj(query)
+        self.query = LinkedObj(query)
         
     def _set_parmas(self,paramsList):
-         self.params = linked_obj(paramsList)
+         self.params = LinkedObj(paramsList)
     
+    def _set_init_body(self):
+        set_body(self)
+
     # if attribute not exist return None as value not any error
     def __getattr__(self, attr):
         return None

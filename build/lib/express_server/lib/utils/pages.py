@@ -19,7 +19,6 @@ class Pages:
             attributes.endHeader(request)
             attributes.addText(route.text,request)
         
-        
     def default(self,text,request,response_code=200):
         request.send_response(response_code)
         attributes.setHeader(request)

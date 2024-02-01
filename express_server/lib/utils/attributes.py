@@ -71,7 +71,7 @@ class Attributes:
             # write file in bytes 
             write_file_chunks(file_full_path,request,chunk_size)
         except Exception as error:
-                print(error)
+                # print(error)
                 request.wfile.write(f"{error}".encode("utf-8"))
     
     def download_file(self,route,request,method,chunk_size = 1024):

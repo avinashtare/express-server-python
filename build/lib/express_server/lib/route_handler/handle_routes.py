@@ -5,6 +5,7 @@ from ..utils import styles
 import traceback 
 from ..utils.paths import normalize_path
 from .handle_paths import verifyPaths
+from ..utils.file_oprations import removeTempFile,remvoe_form_files
 
 # < -- show html pages custom  -- >
 pages = Pages()
@@ -37,13 +38,23 @@ class HandleRoutes:
                     # < -- if resonse data alrady exist don't add new -- >
                     if not ResopnseData: ResopnseData = ResponseRoute()
 
-                    # < -- user callback handler resonse.send or resonse.next -- >
-                    CallbackResponse = route.AllHandlers[index](RequestData,ResopnseData,ResopnseData.next)
+                    CallbackResponse = None
+                    try:
+                        # < -- user callback handler resonse.send or resonse.next -- >
+                        CallbackResponse = route.AllHandlers[index](RequestData,ResopnseData,ResopnseData.next)
+                    except Exception as error:
+                         # < -- remvoe formfiles from temp foder -- >
+                        remvoe_form_files(RequestData.files)
+                        raise error
                     
                     # < -- check user reponse  -- >
                     ResponseState = CallbackResponse
                     if(ResponseState == "end"):
                         try:
+                            # < -- remvoe formfiles from temp foder -- >
+                            remvoe_form_files(RequestData.files)
+                            
+                            # < -- finaly do last opration -- >
                             pages.Send(request,ResopnseData,method)
                         except Exception as error:
                              pages.error(request,f"Internal Server Error:{error}")
@@ -52,32 +63,42 @@ class HandleRoutes:
                         if(index<currentRoute[1]):
                             self.handle_next_handler(index+1,request,routes,method,RequestData,ResopnseData)
                         else:
-                            pages.error(request,f"<------- Thare Is Not Any Next() Response -------> ")
+                            pages.error(request,f"Error:- Thare Is Not Any Next() Response at "+request.path)
                         return True
                     else:
-                        pages.error(request,f"<------- Add A Response Handler Here ------->")
+                        pages.error(request,f"Error:- Return Some Values at "+request.path)
                         return True
                 except Exception as error:
                     # < -- console the full traceback of error -- >
                     traceback.print_exc()  
                     # show repsone error page 
                     pages.error(request,f"Internal Server Error:{error}")
+                    
                     return True
         
         # < -- it don't found any page -- >
         return False
     
     # < -- handler new get request -- > 
-    def handle_get_request(self,request,routes):
+    def handle_user_request(self,request,routes,method):
+        # < -- removing unknown temp files if not removed -- >
+        removeTempFile()
+
         try:
+            # < -- check method available or not  -- >
+            try:
+                if len(routes.all_routes[method]) > 0:
+                    pass
+            except:
+                return
+
             # < -- check routes exit or not inside user defined routes -- >
             if len(routes.all_routes)<=0:
                 # if route not exist show 404 error 
                 pages.show404(request)
             
             # < -- handle get request -- >
-            elif not self.handle_next_handler(0,request,routes,"GET"):
-                
+            elif not self.handle_next_handler(0,request,routes,method):
                 # < --  if handle_next_handler return false then show 404 error  -- >
                 pages.show404(request)
                 
